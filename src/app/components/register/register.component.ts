@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {FormControl, FormGroupDirective, FormGroup, NgForm, Validators} from '@angular/forms';
+import { UserMgmtService } from '../../services/user-mgmt.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -9,30 +11,39 @@ import {FormControl, FormGroupDirective, FormGroup, NgForm, Validators} from '@a
 
 export class RegisterComponent implements OnInit {
    registerForm = new FormGroup({
-	    userName: new FormControl('', [
+	    firstname: new FormControl('', [
+	      Validators.required
+	    ]),
+	    lastname: new FormControl('', [
 	      Validators.required
 	    ]),
 	    email: new FormControl('', [
 	      Validators.required
 	      
 	    ]),
-	    pwd: new FormControl('', [
+	    password: new FormControl('', [
 	      Validators.required,
 	      Validators.minLength(8)
 	    ]),
-	    confirmPwd:new FormControl('', [
+	    confirmPassword:new FormControl('', [
 	      Validators.required,
 	      Validators.minLength(8)
 	    ])
   });
 
-  constructor() { }
+  constructor(public rest:UserMgmtService, private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit() {
   }
 
   onSubmit() {
-  	console.log(this.registerForm.value);
+  	console.log('THIS IS WHATS REGISTERING',this.registerForm.value);
+  	this.rest.registerUser(this.registerForm.value).subscribe((res) => {
+  		alert("Account Created Successfully!!");
+  		
+  	}, (err) => {
+  		console.log("Oops", err);
+  	});
   }
 
 }
