@@ -31,5 +31,13 @@ export class UserMgmtService {
   				);
   }
 
+  // Service to login a user
+  loginUser(user): Observable<any> {
+  	return this.http.post<any>(endpoint+'login', JSON.stringify(user), httpOptions)
+  			.pipe(
+  					tap((user) => console.log('Added'))
+  				);
+  }
+
 
 }

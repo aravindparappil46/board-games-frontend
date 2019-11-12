@@ -40,7 +40,7 @@ export class RegisterComponent implements OnInit {
   	console.log('THIS IS WHATS REGISTERING',this.registerForm.value);
   	this.rest.registerUser(this.registerForm.value).subscribe((res) => {
   		alert("Account Created Successfully!!");
-  		
+  		this.router.navigate(['/login']);
   	}, (err) => {
   		console.log("Oops", err);
   	});
