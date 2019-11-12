@@ -35,7 +35,7 @@ export class UserMgmtService {
   loginUser(user): Observable<any> {
   	return this.http.post<any>(endpoint+'login', JSON.stringify(user), httpOptions)
   			.pipe(
-  					tap((user) => console.log('Added'))
+  					tap((user) => console.log('[LogIn] Success!'))
   				);
   }
 

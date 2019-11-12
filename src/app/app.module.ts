@@ -22,6 +22,7 @@ import { HttpClientModule } from '@angular/common/http';
 /* Components */
 import { LogInComponent } from './components/log-in/log-in.component';
 import { RegisterComponent } from './components/register/register.component';
+import { LandingComponent } from './components/landing/landing.component';
 
 
 @NgModule({
@@ -30,7 +31,8 @@ import { RegisterComponent } from './components/register/register.component';
     LogInComponent,
     RegisterComponent,
     RegisterComponent,
-    LogInComponent
+    LogInComponent,
+    LandingComponent
   ],
   imports: [
     BrowserModule,

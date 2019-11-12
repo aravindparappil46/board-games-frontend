@@ -19,6 +19,7 @@ export class LogInComponent implements OnInit {
 	      Validators.minLength(8)
 	    ])
   });
+
   constructor(public rest:UserMgmtService, private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit() {
@@ -28,9 +29,10 @@ export class LogInComponent implements OnInit {
   	console.log('LOGGING IN WITH',this.loginForm.value);
   	this.rest.loginUser(this.loginForm.value).subscribe((res) => {
   		if(res.length > 0)
-  			alert("Logged In Successfully!!");
+  			this.router.navigate(['/landing'], {state: {data: res}});
   		else
-  			alert("NO SUCH EMAIL!")
+  			alert("Incorrect credentials!! Try again!")
+  			
   		
   	}, (err) => {
   		console.log("Oops", err);
