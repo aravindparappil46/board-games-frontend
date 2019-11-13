@@ -1,9 +1,21 @@
 .bg-container{
   position: fixed;
-     min-width: 100%;
-     background-color: red;
-     background-repeat: no-repeat;
-     background-size: 100%;
-     background-position: center;
-     background-size: cover;
+  min-width: 100%;
+  background-color: #303030;
+  background-repeat: no-repeat;
+  background-size: 100%;
+  background-position: center;
+  background-size: cover;
+}
+
+.new-toolbar {
+  background-color: #e91e63;
+  justify-content: space-between;
+  top: 0;
+  left: 0;
+  right: 0;
+  box-shadow: 0 3px 5px -1px rgba(0, 0, 0, .2), 0 6px 10px 0 rgba(0, 0, 0, .14), 0 1px 18px 0 rgba(0, 0, 0, .12);
+  position: sticky;
+  position: -webkit-sticky; /* For macOS/iOS Safari */
+  z-index: 2; 
 }

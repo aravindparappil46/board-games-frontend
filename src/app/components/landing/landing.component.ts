@@ -7,11 +7,19 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrls: ['./landing.component.css']
 })
 export class LandingComponent implements OnInit {
+  firstName: string;
 
-  constructor(private route: ActivatedRoute, private router: Router) { }
+  constructor(private route: ActivatedRoute, private router: Router) { 
 
-  ngOnInit() {
-  	console.log("[Landing]",history.state.data);
+  	this.firstName = sessionStorage.getItem("name")
+  }
+
+  ngOnInit() {  	
+  }
+
+  public logout(){
+  	sessionStorage.clear();
+  	this.router.navigate(['/login']);
   }
 
 }

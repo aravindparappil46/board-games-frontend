@@ -1,3 +1,14 @@
-<body class="bg-container">
-	<p>landing works!</p>
-</body>
+<mat-toolbar color="primary" class="new-toolbar ">
+	  <div><a href="https://www.google.com" target="_blank" class="positronx">Board Games For All</a></div>
+	  <span class="nav-tool-items">
+	    <a mat-flat-button (click)="logout()">Log Out</a>
+	  </span>
+</mat-toolbar>
+	
+
+<div fxLayout="row" fxLayoutAlign="center center" class="bg-container">
+	<h1 class="white-header">Hello, {{firstName}} </h1>
+	<h1 style="font-color:white;"> What would you like to play?</h1>
+	<button style="margin-right:10px" mat-flat-button color="accent" class="btn-block">Tic Tac Toe</button>
+	<button mat-flat-button color="accent" class="btn-block">Something</button>
+</div>

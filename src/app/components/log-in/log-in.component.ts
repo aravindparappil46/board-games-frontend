@@ -28,8 +28,13 @@ export class LogInComponent implements OnInit {
   onSubmit() {
   	console.log('LOGGING IN WITH',this.loginForm.value);
   	this.rest.loginUser(this.loginForm.value).subscribe((res) => {
-  		if(res.length > 0)
+  		if(res.length > 0){
+        console.log(res)
+        console.log("DIS",res[0]["firstname"])
+        sessionStorage.setItem("name", res[0]["firstname"])
+        sessionStorage.setItem("email", res[0]["email"])
   			this.router.navigate(['/landing'], {state: {data: res}});
+      }
   		else
   			alert("Incorrect credentials!! Try again!")
   			

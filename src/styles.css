@@ -5,10 +5,15 @@ body, app-root {
   padding: 0;
 }
 
-
 .bg-container{
   width: 100vw;
   height: 100vh;
+}
+
+.white-header {
+  color: white;
+  font-size: 50px;
+  font-weight: bold;
 }
 
 .app-header {
