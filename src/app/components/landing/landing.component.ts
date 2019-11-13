@@ -9,13 +9,16 @@ import { UserMgmtService } from '../../services/user-mgmt.service';
 })
 export class LandingComponent implements OnInit {
   firstName: string;
+  activeGames;
 
   constructor(public rest:UserMgmtService, private route: ActivatedRoute, private router: Router) { 
 
-  	this.firstName = sessionStorage.getItem("name")
+  	this.firstName = sessionStorage.getItem("name");
+    this.activeGames = [];
   }
 
-  ngOnInit() {  	
+  ngOnInit() {  
+    this.getActiveGamesForUser();	
   }
 
   public logout() {
@@ -25,17 +28,19 @@ export class LandingComponent implements OnInit {
 
   public goToTTT() {
     var data = {"player1": sessionStorage.getItem("email"), "player2":"ai@ai.com", "gameId":1}
+    this.router.navigate(['/ttt']);  	
+  }
 
-    // this.rest.startNewSession(data).subscribe((res) => {
-    //   sessionStorage.setItem("currSessionId", res);
-    //   this.router.navigate(['/ttt']);
-    // }, (err) => {
-    //   console.log("Oops", err);
-    //   alert("Something went wrong! Try again!")
-    // });
+  public getActiveGamesForUser(){
+    var email = sessionStorage.getItem("email");
 
-    this.router.navigate(['/ttt']);
-  	
+    this.rest.getAllActiveSessions(email).subscribe((res) => {
+      this.activeGames = res;
+      console.log(this.activeGames)
+    }, (err) => {
+      console.log("Failed to get Active Games", err);
+      
+    });
   }
 
 }

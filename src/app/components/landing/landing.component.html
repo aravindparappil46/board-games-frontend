@@ -5,9 +5,39 @@
 	  </span>
 </mat-toolbar>
 	
+<div class="bg-container">
+	<div fxLayout="row" fxLayoutAlign="center center">
+		<h1 class="white-header"> What would you like to play,  {{firstName}}? </h1>
+	</div>
 
-<div fxLayout="row" fxLayoutAlign="center center" class="bg-container">
-	<h1 class="white-header"> What would you like to play,  {{firstName}}? </h1>
-	<button style="margin-right:10px" (click)="goToTTT()" mat-flat-button color="accent" class="btn-block">Tic Tac Toe</button>
-	<button mat-flat-button color="accent" class="btn-block">Something</button>
+	<div fxLayout="row" fxLayoutAlign="center center">
+	    <button style="margin-right:10px" (click)="goToTTT()" mat-flat-button color="accent" class="btn-block">Tic Tac Toe</button>
+		<button mat-flat-button color="accent" class="btn-block">Something Else</button>
+	</div>
+
+	<div fxLayout="row" fxLayoutAlign="center center">
+		<h2 class="white">Pick up where you left off? </h2>
+	</div>
+
+	<div fxLayout="row" fxLayoutAlign="center center">
+		<table class="white">
+			<thead>
+				<tr>
+					<th> Session ID </th>
+					<th> Opponent </th>
+					<th> Game </th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr *ngFor="let game of activeGames">
+				   <td>{{game.id}}</td>
+				   <td>{{game.player_2}}</td>
+
+				   <td *ngIf="game.game_id==1">Tic Tac Toe</td>
+				   <td *ngIf="game.game_id==2">Something Else</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
 </div>

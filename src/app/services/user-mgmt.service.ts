@@ -75,6 +75,16 @@ export class UserMgmtService {
           );
   }
 
+  // Service to get all active games for user, given p1 email
+  getAllActiveSessions(p1): Observable<any> {
+    console.log("[SERVICE] Getting active games for", p1);
+    return this.http.get<any>(endpoint+'getAllActiveSessions/'+p1, httpOptions)
+        .pipe(
+            tap((res) => {
+              return res;
+            })
+          );
+  }
 
 
 }
