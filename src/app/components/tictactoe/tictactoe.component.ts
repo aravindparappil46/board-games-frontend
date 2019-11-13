@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { UserMgmtService } from '../../services/user-mgmt.service';
 
 @Component({
   selector: 'app-tictactoe',
@@ -17,7 +18,7 @@ export class TictactoeComponent implements OnInit {
   gameOver: boolean;
   boardLocked: boolean;
   
-  constructor(private route: ActivatedRoute, private router: Router) { }
+  constructor(public rest:UserMgmtService, private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit() {
   	this.newGame();
@@ -41,7 +42,39 @@ export class TictactoeComponent implements OnInit {
     }, 600);
   }
 
+  saveBoardState(){
+  	// Saving board state in DB
+  	var data = {"sessionId": parseInt(sessionStorage.getItem("currSessionId")), "boardState": JSON.stringify(this.board)};	
+  	this.rest.saveBoardState(data).subscribe((res) => {
+      console.log("Saved board to DB");
+    }, (err) => {
+      console.log("Saving board to DB FAILED!!", err);
+    });
+  }
+
+  deleteFromMovesTable() {
+  	var sessionId = sessionStorage.getItem("currSessionId");
+    this.rest.deleteMoves(sessionId).subscribe((res) => {
+      console.log("Deleted all moves from ttt_moves");
+      this.deleteActiveSession();
+
+    }, (err) => {
+      console.log("Deleting moves FAILED!!", err);
+    });
+  }
+
+  deleteActiveSession() {
+  	var sessionId = sessionStorage.getItem("currSessionId");
+    this.rest.deleteActiveSession(sessionId).subscribe((res) => {
+      console.log("Deleted from active_sessions");
+    }, (err) => {
+      console.log("Deleting session FAILED!!", err);
+    });
+  }
+
   completeMove(player) {
+    this.saveBoardState();
+
     if(this.isWinner(player.symbol))
       this.showGameOver(player);
     else if(!this.availableSquaresExist())
@@ -71,6 +104,11 @@ export class TictactoeComponent implements OnInit {
 
     if(winner !== this.DRAW)
       this.currentPlayer = winner;  
+
+  	// Deleting from tables -- first from moves and then active_session
+  	// coz foreign key relatn
+  	this.deleteFromMovesTable();
+
   }
 
   get winningIndexes(): any[] {
@@ -87,7 +125,6 @@ export class TictactoeComponent implements OnInit {
   }
 
   isWinner(symbol): boolean {
-  	console.log("BOARD",this.board)
     for(let pattern of this.winningIndexes) {
       const foundWinner = this.board[pattern[0]].value == symbol
         && this.board[pattern[1]].value == symbol
@@ -112,6 +149,15 @@ export class TictactoeComponent implements OnInit {
       { value: '' }, { value: '' }, { value: '' }
     ];
 
+    var data = {"player1": sessionStorage.getItem("email"), "player2":"ai@ai.com", "gameId":1}
+
+    this.rest.startNewSession(data).subscribe((res) => {
+      sessionStorage.setItem("currSessionId", res);
+    }, (err) => {
+      console.log("Oops", err);
+      alert("ERR with starting New Session.. Try again!")
+    });
+  	
     this.gameOver = false;
     this.boardLocked = false;
 

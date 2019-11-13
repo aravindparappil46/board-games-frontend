@@ -26,13 +26,15 @@ export class LandingComponent implements OnInit {
   public goToTTT() {
     var data = {"player1": sessionStorage.getItem("email"), "player2":"ai@ai.com", "gameId":1}
 
-    this.rest.startNewSession(data).subscribe((res) => {
-      sessionStorage.setItem("currSessionId", res);
-      this.router.navigate(['/ttt']);
-    }, (err) => {
-      console.log("Oops", err);
-      alert("Something went wrong! Try again!")
-    });
+    // this.rest.startNewSession(data).subscribe((res) => {
+    //   sessionStorage.setItem("currSessionId", res);
+    //   this.router.navigate(['/ttt']);
+    // }, (err) => {
+    //   console.log("Oops", err);
+    //   alert("Something went wrong! Try again!")
+    // });
+
+    this.router.navigate(['/ttt']);
   	
   }
 

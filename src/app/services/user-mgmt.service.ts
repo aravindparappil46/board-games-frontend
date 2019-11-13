@@ -48,5 +48,33 @@ export class UserMgmtService {
           );
   }
 
+  // Serviice to save board state
+  saveBoardState(bs): Observable<any> {
+    console.log("[SERVICE] SAVING BOARD", bs);
+    return this.http.post<any>(endpoint+'storeBoardState', JSON.stringify(bs), httpOptions)
+        .pipe(
+            tap((res) => console.log('Added new entry to ttt_moves with ID =',res))
+          );
+  }
+
+  // Service to delete all moves for a session
+  deleteMoves(sessionId): Observable<any> {
+    console.log("[SERVICE] DELETING Moves", sessionId);
+    return this.http.post<any>(endpoint+'deleteTTTMoves/'+sessionId, httpOptions)
+        .pipe(
+            tap((res) => console.log('Deleted all moves for session id=',sessionId))
+          );
+  }
+
+  // Service to delete a session
+  deleteActiveSession(sessionId): Observable<any> {
+    console.log("[SERVICE] DELETING ENTIRE SESSION!", sessionId);
+    return this.http.post<any>(endpoint+'deleteSession/'+sessionId, httpOptions)
+        .pipe(
+            tap((res) => console.log('Deleted session id=',sessionId))
+          );
+  }
+
+
 
 }
