@@ -39,5 +39,14 @@ export class UserMgmtService {
   				);
   }
 
+  // Service to add a new game session
+  startNewSession(session): Observable<any> {
+    console.log("[SERVICE] Starting a new game session", session);
+    return this.http.post<any>(endpoint+'newSession', JSON.stringify(session), httpOptions)
+        .pipe(
+            tap((res) => console.log('Game started!! ID=',res))
+          );
+  }
+
 
 }

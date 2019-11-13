@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-tictactoe',
@@ -15,7 +16,8 @@ export class TictactoeComponent implements OnInit {
   lastWinner: any;
   gameOver: boolean;
   boardLocked: boolean;
-  constructor() { }
+  
+  constructor(private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit() {
   	this.newGame();
@@ -85,6 +87,7 @@ export class TictactoeComponent implements OnInit {
   }
 
   isWinner(symbol): boolean {
+  	console.log("BOARD",this.board)
     for(let pattern of this.winningIndexes) {
       const foundWinner = this.board[pattern[0]].value == symbol
         && this.board[pattern[1]].value == symbol
@@ -120,6 +123,11 @@ export class TictactoeComponent implements OnInit {
 
   getRndInteger(min, max) {
     return Math.floor(Math.random() * (max - min + 1) ) + min;
+  }
+
+  public logout() {
+  	sessionStorage.clear();
+  	this.router.navigate(['/login']);
   }
 
 }
