@@ -16,6 +16,9 @@ body, app-root {
   font-weight: bold;
 }
 
+.white{
+  color: white;
+}
 .app-header {
   justify-content: space-between;
   position: fixed;

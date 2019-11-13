@@ -23,6 +23,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { LogInComponent } from './components/log-in/log-in.component';
 import { RegisterComponent } from './components/register/register.component';
 import { LandingComponent } from './components/landing/landing.component';
+import { TictactoeComponent } from './components/tictactoe/tictactoe.component';
 
 
 @NgModule({
@@ -32,7 +33,8 @@ import { LandingComponent } from './components/landing/landing.component';
     RegisterComponent,
     RegisterComponent,
     LogInComponent,
-    LandingComponent
+    LandingComponent,
+    TictactoeComponent
   ],
   imports: [
     BrowserModule,

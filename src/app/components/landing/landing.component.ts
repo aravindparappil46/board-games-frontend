@@ -17,9 +17,13 @@ export class LandingComponent implements OnInit {
   ngOnInit() {  	
   }
 
-  public logout(){
+  public logout() {
   	sessionStorage.clear();
   	this.router.navigate(['/login']);
+  }
+
+  public goToTTT() {
+  	this.router.navigate(['/ttt']);
   }
 
 }

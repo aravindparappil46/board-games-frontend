@@ -1,0 +1,58 @@
+.bg-container{
+  position: fixed;
+  min-width: 100%;
+  background-color: #303030;
+  background-repeat: no-repeat;
+  background-size: 100%;
+  background-position: center;
+  background-size: cover;
+}
+
+.new-toolbar {
+  background-color: #e91e63;
+  justify-content: space-between;
+  top: 0;
+  left: 0;
+  right: 0;
+  box-shadow: 0 3px 5px -1px rgba(0, 0, 0, .2), 0 6px 10px 0 rgba(0, 0, 0, .14), 0 1px 18px 0 rgba(0, 0, 0, .12);
+  position: sticky;
+  position: -webkit-sticky; /* For macOS/iOS Safari */
+  z-index: 2; 
+}
+
+#board {
+    width: 302px;
+    margin: 0 auto;
+    border: 1px solid #000;
+    display: grid;
+    grid-template-columns: 100px 100px 100px;
+    grid-template-rows: 100px 100px 100px;
+    font-size: 50px;
+    background-color: #666;
+    grid-gap: 1px;
+}
+
+#board.locked {
+    opacity: .7;
+    pointer-events: none;
+}
+
+#board .square {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+#board .square.checked {
+    cursor: default;
+}
+
+#board .square.winner {
+    background-color: #ffa1a1;
+}
+
+input[type=button] {
+    margin-top: 20px;
+}
