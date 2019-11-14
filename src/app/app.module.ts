@@ -24,6 +24,7 @@ import { LogInComponent } from './components/log-in/log-in.component';
 import { RegisterComponent } from './components/register/register.component';
 import { LandingComponent } from './components/landing/landing.component';
 import { TictactoeComponent } from './components/tictactoe/tictactoe.component';
+import { DotboxComponent } from './components/dotbox/dotbox.component';
 
 
 @NgModule({
@@ -34,7 +35,8 @@ import { TictactoeComponent } from './components/tictactoe/tictactoe.component';
     RegisterComponent,
     LogInComponent,
     LandingComponent,
-    TictactoeComponent
+    TictactoeComponent,
+    DotboxComponent
   ],
   imports: [
     BrowserModule,
