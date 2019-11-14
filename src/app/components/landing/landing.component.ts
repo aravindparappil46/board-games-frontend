@@ -27,20 +27,22 @@ export class LandingComponent implements OnInit {
   }
 
   public goToTTT() {
-    var data = {"player1": sessionStorage.getItem("email"), "player2":"ai@ai.com", "gameId":1}
     this.router.navigate(['/ttt']);  	
   }
 
   public getActiveGamesForUser(){
     var email = sessionStorage.getItem("email");
-
     this.rest.getAllActiveSessions(email).subscribe((res) => {
       this.activeGames = res;
       console.log(this.activeGames)
     }, (err) => {
       console.log("Failed to get Active Games", err);
-      
     });
+  }
+
+  public resumeGame(sessionId) {
+    sessionStorage.setItem("currSessionId", sessionId);
+    this.router.navigate(['/ttt'], {state: {data: {isResumingGame: true}}});    
   }
 
 }

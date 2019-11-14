@@ -29,7 +29,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr *ngFor="let game of activeGames">
+				<tr (click)="resumeGame(game.id)" *ngFor="let game of activeGames">
 				   <td>{{game.id}}</td>
 				   <td>{{game.player_2}}</td>
 

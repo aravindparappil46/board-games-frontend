@@ -72,6 +72,15 @@ export class TictactoeComponent implements OnInit {
     });
   }
 
+  getCurrentBoardState(){
+  	var sessionId = sessionStorage.getItem("currSessionId");
+  	this.rest.getLatestBoard(sessionId).subscribe((res) => {
+      this.board = res;
+    }, (err) => {
+      console.log("Failed to get Board state", err);
+    });
+  }
+
   completeMove(player) {
     this.saveBoardState();
 
@@ -143,20 +152,29 @@ export class TictactoeComponent implements OnInit {
   }
 
   newGame() {
-    this.board = [
-      { value: '' }, { value: '' }, { value: '' },
-      { value: '' }, { value: '' }, { value: '' },
-      { value: '' }, { value: '' }, { value: '' }
-    ];
+  	var isResumingGame = history.state.data["isResumingGame"];
 
-    var data = {"player1": sessionStorage.getItem("email"), "player2":"ai@ai.com", "gameId":1}
+  	if(!isResumingGame)
+  	{
+	    this.board = [
+	      { value: '' }, { value: '' }, { value: '' },
+	      { value: '' }, { value: '' }, { value: '' },
+	      { value: '' }, { value: '' }, { value: '' }
+	    ];
 
-    this.rest.startNewSession(data).subscribe((res) => {
-      sessionStorage.setItem("currSessionId", res);
-    }, (err) => {
-      console.log("Oops", err);
-      alert("ERR with starting New Session.. Try again!")
-    });
+	    var data = {"player1": sessionStorage.getItem("email"), "player2":"ai@ai.com", "gameId":1}
+
+	    this.rest.startNewSession(data).subscribe((res) => {
+	      sessionStorage.setItem("currSessionId", res);
+	    }, (err) => {
+	      console.log("Oops", err);
+	      alert("ERR with starting New Session.. Try again!")
+	    });
+	}
+	else{
+		this.getCurrentBoardState();
+		console.log("Resuming game...board looks like-", this.board);
+	}
   	
     this.gameOver = false;
     this.boardLocked = false;

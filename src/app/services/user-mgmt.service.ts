@@ -87,4 +87,18 @@ export class UserMgmtService {
   }
 
 
+  // Service to get board state for session
+  getLatestBoard(sessionId): Observable<any> {
+    console.log("[SERVICE] Getting board for", sessionId);
+    return this.http.get<any>(endpoint+'getLatestBoardState/'+sessionId, httpOptions)
+        .pipe(
+            tap((res) => {
+              var string_board = res[0]["board_state"];
+              console.log("board!!", JSON.parse(string_board))
+              return JSON.parse(string_board);
+            })
+          );
+  }
+
+
 }
