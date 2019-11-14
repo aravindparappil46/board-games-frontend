@@ -1,3 +1,4 @@
+import { map } from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserMgmtService } from '../../services/user-mgmt.service';
@@ -17,10 +18,16 @@ export class TictactoeComponent implements OnInit {
   lastWinner: any;
   gameOver: boolean;
   boardLocked: boolean;
+  isResuming: boolean;
   
   constructor(public rest:UserMgmtService, private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit() {
+  	if (typeof(history.state.data) === "undefined")
+  		this.isResuming = false; 
+  	else
+  		this.isResuming = true;
+  	console.log(this.isResuming)
   	this.newGame();
   }
 
@@ -69,15 +76,6 @@ export class TictactoeComponent implements OnInit {
       console.log("Deleted from active_sessions");
     }, (err) => {
       console.log("Deleting session FAILED!!", err);
-    });
-  }
-
-  getCurrentBoardState(){
-  	var sessionId = sessionStorage.getItem("currSessionId");
-  	return this.rest.getLatestBoard(sessionId).subscribe((res) => {
-      return res;
-    }, (err) => {
-      console.log("Failed to get Board state", err);
     });
   }
 
@@ -152,9 +150,8 @@ export class TictactoeComponent implements OnInit {
   }
 
   newGame() {
-  	var isResumingGame = history.state.data["isResumingGame"];
 
-  	if(!isResumingGame)
+  	if(!this.isResuming)
   	{
 	    this.board = [
 	      { value: '' }, { value: '' }, { value: '' },
@@ -172,9 +169,13 @@ export class TictactoeComponent implements OnInit {
 	    });
 	}
 	else{
-		this.getCurrentBoardState();
-		console.log("Resuming game...board looks like-", this.board);
-	}
+		this.getCurrentBoardState().subscribe(data => {
+			this.board = JSON.parse(data[0]["board_state"]);
+			this.isResuming = false;
+			console.log("Resuming game...board looks like-", this.board);
+		});
+		
+	}//else
   	
     this.gameOver = false;
     this.boardLocked = false;
@@ -183,6 +184,13 @@ export class TictactoeComponent implements OnInit {
       this.boardLocked = true;
       this.computerMove(true);
     }
+  }
+
+  getCurrentBoardState() {
+  	var sessionId = sessionStorage.getItem("currSessionId");
+  	return this.rest.getLatestBoard(sessionId).pipe(map((res) => {
+      return res;
+    }));
   }
 
   getRndInteger(min, max) {
