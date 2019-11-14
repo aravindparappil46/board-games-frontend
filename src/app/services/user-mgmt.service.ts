@@ -94,7 +94,7 @@ export class UserMgmtService {
         .pipe(
             tap((res) => {
               var string_board = res[0]["board_state"];
-              console.log("board!!", JSON.parse(string_board))
+              console.log("board!!", string_board)
               return JSON.parse(string_board);
             })
           );

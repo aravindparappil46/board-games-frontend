@@ -74,8 +74,8 @@ export class TictactoeComponent implements OnInit {
 
   getCurrentBoardState(){
   	var sessionId = sessionStorage.getItem("currSessionId");
-  	this.rest.getLatestBoard(sessionId).subscribe((res) => {
-      this.board = res;
+  	return this.rest.getLatestBoard(sessionId).subscribe((res) => {
+      return res;
     }, (err) => {
       console.log("Failed to get Board state", err);
     });
