@@ -100,5 +100,17 @@ export class UserMgmtService {
           );
   }
 
+  // Gets all users
+  getAllRegisteredUsers(): Observable<any> {
+    console.log("[SERVICE] Getting Registered Users");
+    var loggedInUserEmail = sessionStorage.getItem('email');
+    return this.http.get<any>(endpoint+'listUsers/'+loggedInUserEmail, httpOptions)
+        .pipe(
+            tap((res) => {
+              return res;
+            })
+          );
+  }
+
 
 }

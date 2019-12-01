@@ -103,8 +103,6 @@ export class DotboxComponent implements OnInit {
         alert("This bar is already filled");
       
       else if (checkBarState == false) {
-
-
         let filledAbove = false;
         let filledBelow = false;
         let filledRight = false;
@@ -340,7 +338,7 @@ export class DotboxComponent implements OnInit {
     let winnerDeclared = '';
 
     if (this.playerArray[0].points > this.playerArray[1].points) 
-      winnerDeclared = 'Human Wins!';
+      winnerDeclared = 'You Win!';
     
     else if(this.playerArray[0].points < this.playerArray[1].points)
       winnerDeclared = 'Computer Wins!';
@@ -348,7 +346,7 @@ export class DotboxComponent implements OnInit {
     else
       winnerDeclared = "It's a tie!";
     
-    let finalScore = 'Human: ' + this.playerArray[0].points + '<br>' + 'Computer: ' + this.playerArray[1].points ;
+    let finalScore = 'You: ' + this.playerArray[0].points + ' Computer: ' + this.playerArray[1].points ;
     alert(winnerDeclared+"Scores:"+finalScore);
   }
 
@@ -367,11 +365,8 @@ export class DotboxComponent implements OnInit {
                                                                             
   takeTurn() {
     let topThis = this;
-    if( this.turn === 0) {
-      console.log('Its not my turn');
-    }
-    else if(this.turn === 1) { 
-      console.log('Im going to take my turn');
+   
+    if(this.turn === 1) { 
       let openBars = [];
       //select only unfilled bars
       for (let barId in this.barControlObject) {

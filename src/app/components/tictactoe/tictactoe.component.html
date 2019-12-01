@@ -7,11 +7,10 @@
 
 <div class="bg-container">
 	<h1 class="white-header"> Tic-Tac-Toe </h1>
-	<h2 class="white"> You get the first turn! </h2>
-
+	
 	<h3 class="white" *ngIf="!gameOver">Current player: {{ currentPlayer.name }}</h3>
 	<h3 class="white" *ngIf="gameOver && lastWinner == PLAYER_HUMAN">You win</h3>
-	<h3 class="white" *ngIf="gameOver && lastWinner == PLAYER_COMPUTER">Computer wins</h3>
+	<h3 class="white" *ngIf="gameOver && lastWinner == PLAYER_OPPONENT">Opponent wins</h3>
 	<h3 class="white" *ngIf="gameOver && lastWinner == DRAW">It's a draw</h3>
 
 		

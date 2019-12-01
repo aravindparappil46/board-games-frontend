@@ -6,7 +6,8 @@
 </mat-toolbar>
 
 <div class="bg-container">
-	<div class="board" *ngIf="barControlObject && squareControlObject"> 
+	<div fxLayout="row" fxLayoutAlign="center center">
+	  <div class="board" *ngIf="barControlObject && squareControlObject"> 
         <div class="game-row" *ngFor="let row of rowArray">
           <div class="game-column" *ngFor="let column of columnArray">
             <div class="h-row"> 
@@ -41,5 +42,5 @@
           </div> <!-- column for --> 
         </div> <!-- row for -->
       </div> <!-- board -->
-
+	</div>
 </div>

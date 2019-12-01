@@ -9,8 +9,8 @@ import { UserMgmtService } from '../../services/user-mgmt.service';
   styleUrls: ['./tictactoe.component.css']
 })
 export class TictactoeComponent implements OnInit {
-  PLAYER_COMPUTER = { name: 'Computer', symbol: 'o' };
-  PLAYER_HUMAN = { name: sessionStorage.getItem('name'), symbol: 'x' };
+  PLAYER_OPPONENT = { name: 'Computer', symbol: 'o', email: 'ai@ai.com' };
+  PLAYER_HUMAN = { name: sessionStorage.getItem('name'), symbol: 'x', email: sessionStorage.getItem('email') };
   DRAW = { name: 'Draw' };
 
   board: any[];
@@ -19,15 +19,33 @@ export class TictactoeComponent implements OnInit {
   gameOver: boolean;
   boardLocked: boolean;
   isResuming: boolean;
+  isMultiplayer: boolean = false;
+  opponent: string;
   
   constructor(public rest:UserMgmtService, private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit() {
+    // Getting opponent details, in case of multiplayer game
+    var isHuman = Object.keys(this.route.snapshot.queryParams).length > 0
+
+    if(isHuman){
+     this.route.queryParams
+      .subscribe(params => {
+        if(typeof(params) != "undefined"){
+          this.opponent = params.opponent;
+          this.isMultiplayer = true;
+          this.PLAYER_OPPONENT = { name: sessionStorage.getItem('opponentName'), symbol: 'o', email: this.opponent };
+          console.log("Playing against ", this.opponent);
+        }
+      });
+    }
+
+    // In case of resuming a previous game
   	if (typeof(history.state.data) === "undefined")
   		this.isResuming = false; 
   	else
   		this.isResuming = true;
-  	console.log(this.isResuming)
+  	console.log("Multiplayer?", this.isMultiplayer);
   	this.newGame();
   }
 
@@ -38,15 +56,41 @@ export class TictactoeComponent implements OnInit {
     }
   }
 
+   getCurrentBoardState() {
+    var sessionId = sessionStorage.getItem("currSessionId");
+    return this.rest.getLatestBoard(sessionId).pipe(map((res) => {
+      return res;
+    }));
+  }
+
   computerMove(firstMove: boolean = false) {
     this.boardLocked = true;
 
     setTimeout(() => {
       let square = firstMove ? this.board[4] : this.getRandomAvailableSquare();
-      square.value = this.PLAYER_COMPUTER.symbol;
-      this.completeMove(this.PLAYER_COMPUTER);
+      square.value = this.PLAYER_OPPONENT.symbol;
+      this.completeMove(this.PLAYER_OPPONENT);
       this.boardLocked = false;
     }, 600);
+  }
+
+  opponentMove() {
+    this.boardLocked = true;
+
+    var longPoll = setInterval( () => {
+      console.log("LONG POLLING for new board....", this.boardLocked)
+      this.getCurrentBoardState().subscribe(data => {
+        var currBoard = JSON.parse(data[0]["board_state"]);
+        
+         if(JSON.stringify(currBoard) != JSON.stringify(this.board)){
+          this.boardLocked = false;
+          this.isResuming = false;
+          this.board = currBoard;
+          clearInterval(longPoll);
+        }
+      });
+  
+    }, 3000);
   }
 
   saveBoardState(){
@@ -87,12 +131,21 @@ export class TictactoeComponent implements OnInit {
     else if(!this.availableSquaresExist())
       this.showGameOver(this.DRAW);
     else {
-      this.currentPlayer = (this.currentPlayer == this.PLAYER_COMPUTER ? this.PLAYER_HUMAN : this.PLAYER_COMPUTER);
+      this.currentPlayer = (this.currentPlayer == this.PLAYER_OPPONENT ? this.PLAYER_HUMAN : this.PLAYER_OPPONENT);
 
-      if(this.currentPlayer == this.PLAYER_COMPUTER)
-        this.computerMove();
-    }
-  }
+      if(!this.isMultiplayer){
+        if(this.currentPlayer == this.PLAYER_OPPONENT)
+          this.computerMove();
+      }
+      else{
+        // Multiplayer game... Must wait for the other player to make a move
+        if(this.currentPlayer == this.PLAYER_OPPONENT){
+            console.log("Waiting for opponent")
+            this.opponentMove();
+        }
+      } // multiplayer else
+    } // game not over else
+  } // completeMove end
 
   availableSquaresExist(): boolean {
     return this.board.filter(s => s.value == '').length > 0;
@@ -150,16 +203,14 @@ export class TictactoeComponent implements OnInit {
   }
 
   newGame() {
-
-  	if(!this.isResuming)
-  	{
+  	if(!this.isResuming) {
 	    this.board = [
 	      { value: '' }, { value: '' }, { value: '' },
 	      { value: '' }, { value: '' }, { value: '' },
 	      { value: '' }, { value: '' }, { value: '' }
 	    ];
 
-	    var data = {"player1": sessionStorage.getItem("email"), "player2":"ai@ai.com", "gameId":1}
+	    var data = {"player1": sessionStorage.getItem("email"), "player2":this.PLAYER_OPPONENT['email'], "gameId":1}
 
 	    this.rest.startNewSession(data).subscribe((res) => {
 	      sessionStorage.setItem("currSessionId", res);
@@ -167,31 +218,27 @@ export class TictactoeComponent implements OnInit {
 	      console.log("Oops", err);
 	      alert("ERR with starting New Session.. Try again!")
 	    });
-	}
-	else{
-		this.getCurrentBoardState().subscribe(data => {
-			this.board = JSON.parse(data[0]["board_state"]);
-			this.isResuming = false;
-			console.log("Resuming game...board looks like-", this.board);
-		});
-		
-	}//else
+	  }
+
+  	else {
+  		this.getCurrentBoardState().subscribe(data => {
+  			this.board = JSON.parse(data[0]["board_state"]);
+  			this.isResuming = false;
+  			console.log("Resuming game...board looks like-", this.board);
+  		});
+  		
+  	}//else
   	
     this.gameOver = false;
     this.boardLocked = false;
 
-    if(this.currentPlayer == this.PLAYER_COMPUTER){
+    if(this.currentPlayer == this.PLAYER_OPPONENT){
       this.boardLocked = true;
       this.computerMove(true);
     }
   }
 
-  getCurrentBoardState() {
-  	var sessionId = sessionStorage.getItem("currSessionId");
-  	return this.rest.getLatestBoard(sessionId).pipe(map((res) => {
-      return res;
-    }));
-  }
+ 
 
   getRndInteger(min, max) {
     return Math.floor(Math.random() * (max - min + 1) ) + min;

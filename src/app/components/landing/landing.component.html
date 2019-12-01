@@ -11,15 +11,17 @@
 	</div>
 
 	<div fxLayout="row" fxLayoutAlign="center center">
-	    <button style="margin-right:10px" (click)="goToTTT()" mat-flat-button color="accent" class="btn-block">Tic Tac Toe</button>
-		<button mat-flat-button color="accent" class="btn-block">Something Else</button>
+	    <button style="margin-right:10px" (click)="goToTTT()" mat-flat-button color="accent" class="btn-block">Tic Tac Toe v/s AI</button>
+	    <button style="margin-right:10px" (click)="chooseOpponent()" mat-flat-button color="accent" class="btn-block">Tic Tac Toe v/s Human</button>
+		<button mat-flat-button color="accent" (click)="goToDotbox()" class="btn-block">Dotbox</button>
 	</div>
 
 	<div fxLayout="row" fxLayoutAlign="center center">
-		<h2 class="white">Pick up where you left off? </h2>
+		<h2 class="white">Pick up where you left off </h2>
+		<h2 *ngIf = "isMultiplayer" style="margin-left: 40px"class="white">Choose your opponent! </h2>
 	</div>
 
-	<div fxLayout="row" fxLayoutAlign="center center">
+	<div fxLayout="row" fxLayoutAlign="center">
 		<table class="white">
 			<thead>
 				<tr>
@@ -29,15 +31,33 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr (click)="resumeGame(game.id)" *ngFor="let game of activeGames">
+				<tr (click)="resumeGame(game.id, game.player_1, game.player_2)" *ngFor="let game of activeGames">
 				   <td>{{game.id}}</td>
-				   <td>{{game.player_2}}</td>
+				   <td *ngIf = "loggedInUserEmail != game.player_2">{{game.player_2}}</td>
+				   <td *ngIf = "loggedInUserEmail != game.player_1">{{game.player_1}}</td>
 
 				   <td *ngIf="game.game_id==1">Tic Tac Toe</td>
-				   <td *ngIf="game.game_id==2">Something Else</td>
+				   <td *ngIf="game.game_id==2">Dotbox</td>
 				</tr>
 			</tbody>
 		</table>
+
+		<table class="white" *ngIf = "isMultiplayer" style="margin-left: 40px" >
+			<thead>
+				<tr>
+					<th> Email </th>
+					<th> Name </th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr (click)="goToTTTHuman(user.email, user.firstname)" *ngFor="let user of registeredUsers">
+				   <td>{{user.email}}</td>
+				   <td>{{user.firstname}} {{user.lastname}}</td>
+				</tr>
+			</tbody>
+		</table>
+
+
 	</div>
 
 </div>
