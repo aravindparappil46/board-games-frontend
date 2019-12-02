@@ -21,6 +21,7 @@ export class TictactoeComponent implements OnInit {
   isResuming: boolean;
   isMultiplayer: boolean = false;
   opponent: string;
+  isPlayerOne: boolean;
   
   constructor(public rest:UserMgmtService, private route: ActivatedRoute, private router: Router) { }
 
@@ -37,10 +38,12 @@ export class TictactoeComponent implements OnInit {
           var p1 = params.p1;
           var p2 = params.p2;
           if(p1 == sessionStorage.getItem('email')) {
+            this.isPlayerOne = true;
             this.PLAYER_HUMAN = { name: sessionStorage.getItem('email'), symbol: 'x', email: sessionStorage.getItem('email') };
             this.PLAYER_OPPONENT = { name: sessionStorage.getItem('opponentName'), symbol: 'o', email: this.opponent };
           }
           else {
+            this.isPlayerOne = false;
             this.PLAYER_HUMAN = { name: sessionStorage.getItem('email'), symbol: 'o', email: sessionStorage.getItem('email') };
             this.PLAYER_OPPONENT = { name: sessionStorage.getItem('opponentName'), symbol: 'x', email: this.opponent };
           }
@@ -84,14 +87,13 @@ export class TictactoeComponent implements OnInit {
 
   swapPlayers() {
       if(this.currentPlayer.email == this.PLAYER_HUMAN.email){
-        console.log("changing to opponent")
         this.currentPlayer = this.PLAYER_OPPONENT
       }
       else{
-        console.log("changing to human")
         this.currentPlayer = this.PLAYER_HUMAN
       }
   }
+
   opponentMove() {
     this.boardLocked = true;
     this.swapPlayers();
@@ -103,8 +105,15 @@ export class TictactoeComponent implements OnInit {
          if(JSON.stringify(currBoard) != JSON.stringify(this.board)) {
             this.boardLocked = false;
             this.isResuming = false;
-            this.swapPlayers();
             this.board = currBoard;
+            
+            // After opponent makes a move, did he win? Is it a draw?
+            if(this.isWinner(this.currentPlayer.symbol))
+              this.showGameOver(this.currentPlayer);
+            else if(!this.availableSquaresExist())
+              this.showGameOver(this.DRAW);
+
+            this.swapPlayers();
             clearInterval(longPoll);
         }
       });
@@ -157,11 +166,7 @@ export class TictactoeComponent implements OnInit {
       }
       else{
         // Multiplayer game... Must wait for the other player to make a move
-        // if(this.currentPlayer == this.PLAYER_OPPONENT){
-            
-
             this.opponentMove();
-        //}
       } // multiplayer else
     } // game not over else
   } // completeMove end
@@ -185,9 +190,9 @@ export class TictactoeComponent implements OnInit {
       this.currentPlayer = winner;  
 
   	// Deleting from tables -- first from moves and then active_session
-  	// coz foreign key relatn
-  	this.deleteFromMovesTable();
-
+  	// coz foreign key relatn.. can't do it for multiplayer as opponent polls db always
+    if(!this.isMultiplayer)
+  	  this.deleteFromMovesTable();
   }
 
   get winningIndexes(): any[] {
@@ -204,6 +209,7 @@ export class TictactoeComponent implements OnInit {
   }
 
   isWinner(symbol): boolean {
+
     for(let pattern of this.winningIndexes) {
       const foundWinner = this.board[pattern[0]].value == symbol
         && this.board[pattern[1]].value == symbol
@@ -246,6 +252,10 @@ export class TictactoeComponent implements OnInit {
   			console.log("Resuming game...board looks like-", this.board);
   		});
   		
+      // Who played last? Who's current player?
+      if(this.isMultiplayer)
+        this.findCurrentPlayer();
+
   	}//else
   	
     this.gameOver = false;
@@ -256,8 +266,33 @@ export class TictactoeComponent implements OnInit {
       this.computerMove(true);
     }
   }
+  
+  // Counts number of X and Os and assigns currentPlayer
+  // Assuming X always plays first
+  findCurrentPlayer() {
+    var countX = 0;
+    var countO = 0;
+    this.board.forEach(function(i) {
+      if(i.value == 'x')
+      countX += 1 
+      else if(i.value == 'o') 
+      countO += 1
+    });
+    console.log("X=", countX, " O=", countO)
+    if(countX == countO) {
+    if(this.isPlayerOne)
+    this.currentPlayer = this.PLAYER_HUMAN
+    else
+    this.currentPlayer = this.PLAYER_OPPONENT
+    }
+    else if(countX > countO) { 
+    if(this.isPlayerOne)
+    this.currentPlayer = this.PLAYER_OPPONENT
+    else
+    this.currentPlayer = this.PLAYER_HUMAN
+    }
+  }
 
- 
 
   getRndInteger(min, max) {
     return Math.floor(Math.random() * (max - min + 1) ) + min;
