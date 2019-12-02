@@ -236,7 +236,6 @@ export class TictactoeComponent implements OnInit {
 	    ];
 
 	    var data = {"player1": sessionStorage.getItem("email"), "player2":this.PLAYER_OPPONENT['email'], "gameId":1}
-
 	    this.rest.startNewSession(data).subscribe((res) => {
 	      sessionStorage.setItem("currSessionId", res);
 	    }, (err) => {
@@ -250,18 +249,21 @@ export class TictactoeComponent implements OnInit {
   			this.board = JSON.parse(data[0]["board_state"]);
   			this.isResuming = false;
   			console.log("Resuming game...board looks like-", this.board);
-  		});
-  		
-      // Who played last? Who's current player?
-      if(this.isMultiplayer)
-        this.findCurrentPlayer();
 
-  	}//else
+        // Who played last? Who's current player?
+        if(this.isMultiplayer){
+          this.findCurrentPlayer();
+          if(this.currentPlayer.symbol != this.PLAYER_HUMAN.symbol)
+            this.opponentMove()
+        }
+
+  		});
+  	}// resuming else
   	
     this.gameOver = false;
     this.boardLocked = false;
 
-    if(this.currentPlayer == this.PLAYER_OPPONENT){
+    if(this.currentPlayer == this.PLAYER_OPPONENT && !this.isMultiplayer){
       this.boardLocked = true;
       this.computerMove(true);
     }
@@ -274,25 +276,26 @@ export class TictactoeComponent implements OnInit {
     var countO = 0;
     this.board.forEach(function(i) {
       if(i.value == 'x')
-      countX += 1 
+        countX += 1 
       else if(i.value == 'o') 
-      countO += 1
+        countO += 1
     });
-    console.log("X=", countX, " O=", countO)
+    
     if(countX == countO) {
-    if(this.isPlayerOne)
-    this.currentPlayer = this.PLAYER_HUMAN
-    else
-    this.currentPlayer = this.PLAYER_OPPONENT
+      if(this.isPlayerOne){
+        this.currentPlayer = this.PLAYER_HUMAN
+      }
+      else{
+         this.currentPlayer = this.PLAYER_OPPONENT
+      }
     }
     else if(countX > countO) { 
-    if(this.isPlayerOne)
-    this.currentPlayer = this.PLAYER_OPPONENT
-    else
-    this.currentPlayer = this.PLAYER_HUMAN
+      if(this.isPlayerOne)
+        this.currentPlayer = this.PLAYER_OPPONENT
+      else
+        this.currentPlayer = this.PLAYER_HUMAN
     }
   }
-
 
   getRndInteger(min, max) {
     return Math.floor(Math.random() * (max - min + 1) ) + min;
