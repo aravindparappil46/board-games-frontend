@@ -47,8 +47,9 @@ export class LandingComponent implements OnInit {
   }
 
   public goToTTTHuman(p2email, firstname){
-    sessionStorage.setItem("opponentName", firstname);
-    this.router.navigate(['/ttt'], {queryParams:{opponent: p2email}});
+    sessionStorage.setItem("opponentName", p2email);
+    var p1 = sessionStorage.getItem('email')
+    this.router.navigate(['/ttt'], {queryParams:{opponent: p2email, p1:p1, p2:p2email}});
   }
 
   public goToDotbox() {
@@ -67,15 +68,10 @@ export class LandingComponent implements OnInit {
 
   public resumeGame(sessionId, player1, player2) {
     sessionStorage.setItem("currSessionId", sessionId);
-    if(player1 != this.loggedInUserEmail)
-      var opponentEmail = player1
-    else
-      var opponentEmail = player2
-    
-    console.log("OPP", opponentEmail)
-    if (opponentEmail != 'ai@ai.com') {
-      sessionStorage.setItem("opponentName", player2);
-      this.router.navigate(['/ttt'], {state: {data: {isResumingGame: true}}, queryParams:{opponent:opponentEmail}});
+
+    if (player2 != 'ai@ai.com') {
+      sessionStorage.setItem("opponentName", player1);
+      this.router.navigate(['/ttt'], {state: {data: {isResumingGame: true}}, queryParams:{opponent:player1, p1: player1, p2: player2}});
     }
     else
         this.router.navigate(['/ttt'], {state: {data: {isResumingGame: true}}});

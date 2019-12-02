@@ -10,7 +10,7 @@ import { UserMgmtService } from '../../services/user-mgmt.service';
 })
 export class TictactoeComponent implements OnInit {
   PLAYER_OPPONENT = { name: 'Computer', symbol: 'o', email: 'ai@ai.com' };
-  PLAYER_HUMAN = { name: sessionStorage.getItem('name'), symbol: 'x', email: sessionStorage.getItem('email') };
+  PLAYER_HUMAN = { name: sessionStorage.getItem('email'), symbol: 'x', email: sessionStorage.getItem('email') };
   DRAW = { name: 'Draw' };
 
   board: any[];
@@ -31,12 +31,20 @@ export class TictactoeComponent implements OnInit {
     if(isHuman){
      this.route.queryParams
       .subscribe(params => {
-        if(typeof(params) != "undefined"){
           this.opponent = params.opponent;
           this.isMultiplayer = true;
-          this.PLAYER_OPPONENT = { name: sessionStorage.getItem('opponentName'), symbol: 'o', email: this.opponent };
+          // Setting the right player marker. YOU are always HUMAN
+          var p1 = params.p1;
+          var p2 = params.p2;
+          if(p1 == sessionStorage.getItem('email')) {
+            this.PLAYER_HUMAN = { name: sessionStorage.getItem('email'), symbol: 'x', email: sessionStorage.getItem('email') };
+            this.PLAYER_OPPONENT = { name: sessionStorage.getItem('opponentName'), symbol: 'o', email: this.opponent };
+          }
+          else {
+            this.PLAYER_HUMAN = { name: sessionStorage.getItem('email'), symbol: 'o', email: sessionStorage.getItem('email') };
+            this.PLAYER_OPPONENT = { name: sessionStorage.getItem('opponentName'), symbol: 'x', email: this.opponent };
+          }
           console.log("Playing against ", this.opponent);
-        }
       });
     }
 
@@ -74,19 +82,30 @@ export class TictactoeComponent implements OnInit {
     }, 600);
   }
 
+  swapPlayers() {
+      if(this.currentPlayer.email == this.PLAYER_HUMAN.email){
+        console.log("changing to opponent")
+        this.currentPlayer = this.PLAYER_OPPONENT
+      }
+      else{
+        console.log("changing to human")
+        this.currentPlayer = this.PLAYER_HUMAN
+      }
+  }
   opponentMove() {
     this.boardLocked = true;
-
+    this.swapPlayers();
     var longPoll = setInterval( () => {
       console.log("LONG POLLING for new board....", this.boardLocked)
       this.getCurrentBoardState().subscribe(data => {
         var currBoard = JSON.parse(data[0]["board_state"]);
         
-         if(JSON.stringify(currBoard) != JSON.stringify(this.board)){
-          this.boardLocked = false;
-          this.isResuming = false;
-          this.board = currBoard;
-          clearInterval(longPoll);
+         if(JSON.stringify(currBoard) != JSON.stringify(this.board)) {
+            this.boardLocked = false;
+            this.isResuming = false;
+            this.swapPlayers();
+            this.board = currBoard;
+            clearInterval(longPoll);
         }
       });
   
@@ -131,18 +150,18 @@ export class TictactoeComponent implements OnInit {
     else if(!this.availableSquaresExist())
       this.showGameOver(this.DRAW);
     else {
-      this.currentPlayer = (this.currentPlayer == this.PLAYER_OPPONENT ? this.PLAYER_HUMAN : this.PLAYER_OPPONENT);
-
       if(!this.isMultiplayer){
+        this.currentPlayer = (this.currentPlayer == this.PLAYER_OPPONENT ? this.PLAYER_HUMAN : this.PLAYER_OPPONENT);
         if(this.currentPlayer == this.PLAYER_OPPONENT)
           this.computerMove();
       }
       else{
         // Multiplayer game... Must wait for the other player to make a move
-        if(this.currentPlayer == this.PLAYER_OPPONENT){
-            console.log("Waiting for opponent")
+        // if(this.currentPlayer == this.PLAYER_OPPONENT){
+            
+
             this.opponentMove();
-        }
+        //}
       } // multiplayer else
     } // game not over else
   } // completeMove end
