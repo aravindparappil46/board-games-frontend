@@ -108,10 +108,14 @@ export class TictactoeComponent implements OnInit {
             this.board = currBoard;
             
             // After opponent makes a move, did he win? Is it a draw?
-            if(this.isWinner(this.currentPlayer.symbol))
+            if(this.isWinner(this.currentPlayer.symbol)){
               this.showGameOver(this.currentPlayer);
-            else if(!this.availableSquaresExist())
+              this.deleteFromMovesTable();
+            }
+            else if(!this.availableSquaresExist()){
               this.showGameOver(this.DRAW);
+              this.deleteFromMovesTable();
+            }
 
             this.swapPlayers();
             clearInterval(longPoll);
@@ -209,7 +213,6 @@ export class TictactoeComponent implements OnInit {
   }
 
   isWinner(symbol): boolean {
-
     for(let pattern of this.winningIndexes) {
       const foundWinner = this.board[pattern[0]].value == symbol
         && this.board[pattern[1]].value == symbol
@@ -219,7 +222,6 @@ export class TictactoeComponent implements OnInit {
         for(let index of pattern) {
           this.board[index].winner = true;
         }
-
         return true;
       }
     }
