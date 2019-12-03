@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http
 import { Observable, of } from 'rxjs';
 import { map, catchError, tap } from 'rxjs/operators';
 
-const endpoint = 'https://silo.cs.indiana.edu:52112/';
+const endpoint = 'http://silo.cs.indiana.edu:52112/';
 const httpOptions = {
   headers: new HttpHeaders({
     'Content-Type':  'application/json'
