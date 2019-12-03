@@ -45,6 +45,11 @@ export class DotboxComponent implements OnInit {
   	this.newGame();
   }
   
+  public logout() {
+    sessionStorage.clear();
+    this.router.navigate(['/login']);
+  }
+  
   newGame() {
     this.barControlObject = {};
     this.squareControlObject = {};
